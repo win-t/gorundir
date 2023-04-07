@@ -1,6 +1,6 @@
 # What is this?
 
-simple utility to `go run` some your package when you are outside the module directory
+simple utility to `go run` your package when you are outside the module directory
 
 # Example
 
