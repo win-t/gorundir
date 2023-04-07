@@ -1,3 +1,3 @@
-module kurniadwin.to/gomodrun
+module kurniadwin.to/gorundir
 
 go 1.20
