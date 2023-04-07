@@ -21,7 +21,7 @@ func main() {
 	targetSum256 := sha256.Sum256([]byte(targetDir))
 	targetName := hex.EncodeToString(targetSum256[:])
 
-	targetFullPath := filepath.Join(os.TempDir(), "gomodrun", targetName)
+	targetFullPath := filepath.Join(os.TempDir(), "gorundir", targetName)
 
 	err = os.Chdir(targetDir)
 	check(err)
