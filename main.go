@@ -1,11 +1,10 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
@@ -18,10 +17,17 @@ func main() {
 		targetDir = os.Args[1]
 	}
 
-	targetSum256 := sha256.Sum256([]byte(targetDir))
-	targetName := hex.EncodeToString(targetSum256[:])
+	nameParts := strings.Split(targetDir, string(os.PathSeparator))
+	for i := 0; i < len(nameParts)-1; i++ {
+		if len(nameParts[i]) > 6 {
+			nameParts[i] = nameParts[i][:4] + ".."
+		}
+	}
+	if len(nameParts) > 0 && nameParts[0] == "" {
+		nameParts = nameParts[1:]
+	}
 
-	targetFullPath := filepath.Join(os.TempDir(), "gorundir", targetName)
+	targetFullPath := filepath.Join(os.TempDir(), "gorundir", strings.Join(nameParts, "+"))
 
 	err = os.Chdir(targetDir)
 	check(err)
