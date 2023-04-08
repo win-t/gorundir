@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,9 +10,10 @@ import (
 )
 
 func main() {
-	originalDir, err := os.Getwd()
-	check(err)
-
+	if len(os.Args) < 2 {
+		fmt.Fprintln(os.Stderr, "no directory is specified")
+		os.Exit(1)
+	}
 	targetDir, err := filepath.Abs(os.Args[1])
 	if err != nil {
 		targetDir = os.Args[1]
@@ -29,15 +31,9 @@ func main() {
 
 	targetFullPath := filepath.Join(os.TempDir(), "gorundir", strings.Join(nameParts, "+"))
 
-	err = os.Chdir(targetDir)
-	check(err)
-
-	goBuild := exec.Command("go", "build", "-o", targetFullPath, ".")
+	goBuild := exec.Command("go", "build", "-o", targetFullPath, "-C", targetDir, ".")
 	goBuild.Stdin, goBuild.Stdout, goBuild.Stderr = nil, os.Stdout, os.Stderr
 	err = goBuild.Run()
-	check(err)
-
-	err = os.Chdir(originalDir)
 	check(err)
 
 	err = syscall.Exec(targetFullPath, os.Args[1:], os.Environ())
